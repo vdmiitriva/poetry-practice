@@ -2,7 +2,12 @@
 
 ## Цель проекта
 
-Проект предназначен для работы с банковскими операциями. В проекте реализованы функции для фильтрации операций по статусу и сортировки операций по дате.
+Проект предназначен для работы с банковскими операциями клиента.
+
+В проекте реализованы функции для обработки данных:
+
+- фильтрация операций по статусу;
+- сортировка операций по дате.
 
 ## Установка
 
@@ -26,48 +31,119 @@ poetry install
 
 ## Использование
 
-### filter_by_state
+### Функция filter_by_state
 
-Функция `filter_by_state` фильтрует список операций по статусу.
+Функция `filter_by_state` фильтрует список операций по значению ключа `state`.
 
-По умолчанию используются операции со статусом `EXECUTED`:
+По умолчанию функция выбирает операции со статусом:
 
 ```python
-filter_by_state(operations)
+"EXECUTED"
 ```
 
-Чтобы выбрать другой статус:
+Пример использования:
+
+```python
+from src.processing import filter_by_state
+
+operations = [
+    {"id": 1, "state": "EXECUTED"},
+    {"id": 2, "state": "CANCELED"},
+]
+
+result = filter_by_state(operations)
+
+print(result)
+```
+
+Результат:
+
+```python
+[
+    {"id": 1, "state": "EXECUTED"}
+]
+```
+
+Также можно передать другой статус:
 
 ```python
 filter_by_state(operations, "CANCELED")
 ```
 
-### sort_by_date
-
-Функция `sort_by_date` сортирует операции по дате.
-
-По умолчанию операции сортируются от новых к старым:
+Результат:
 
 ```python
-sort_by_date(operations)
+[
+    {"id": 2, "state": "CANCELED"}
+]
 ```
 
-Для сортировки от старых к новым:
+---
+
+### Функция sort_by_date
+
+Функция `sort_by_date` сортирует список операций по дате.
+
+По умолчанию сортировка выполняется по убыванию даты — от новых операций к старым:
+
+```python
+from src.processing import sort_by_date
+
+result = sort_by_date(operations)
+```
+
+Для сортировки от старых операций к новым необходимо передать параметр:
 
 ```python
 sort_by_date(operations, reverse=False)
 ```
 
-## Пример
+Пример:
 
 ```python
 operations = [
-    {"date": "2024-03-11", "state": "EXECUTED"},
-    {"date": "2024-05-20", "state": "CANCELED"},
-    {"date": "2024-01-15", "state": "EXECUTED"},
+    {"date": "2024-01-15"},
+    {"date": "2024-05-20"},
+    {"date": "2024-03-11"},
 ]
 
-executed_operations = filter_by_state(operations)
-
-sorted_operations = sort_by_date(operations)
+result = sort_by_date(operations)
 ```
+
+Результат:
+
+```python
+[
+    {"date": "2024-05-20"},
+    {"date": "2024-03-11"},
+    {"date": "2024-01-15"}
+]
+```
+
+## Проверка качества кода
+
+Для проверки проекта использовались:
+
+- flake8;
+- mypy;
+- isort.
+
+Команды для запуска проверок:
+
+```bash
+poetry run flake8 .
+```
+
+```bash
+poetry run mypy .
+```
+
+```bash
+poetry run isort --check-only .
+```
+
+Результаты проверки:
+
+- flake8 — ошибок не обнаружено;
+- mypy — ошибок не обнаружено;
+- isort — ошибок форматирования импортов не обнаружено.
