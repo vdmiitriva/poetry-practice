@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 def mask_account_card(s: str) -> str:
+    """Маскирует номер карты или счета."""
     parts = s.split()
     if len(parts) < 2:
         return ""
@@ -16,5 +17,6 @@ def mask_account_card(s: str) -> str:
 
 
 def get_date(s: str) -> str:
+    """Преобразует дату в формат ДД.ММ.ГГГГ."""
     date = datetime.fromisoformat(s)
     return date.strftime("%d.%m.%Y")
