@@ -4,7 +4,7 @@ from src.processing import filter_by_state, sort_by_date
 
 
 @pytest.fixture
-def operations():
+def operations() -> list[dict]:
     return [
         {
             "state": "EXECUTED",
@@ -34,12 +34,16 @@ def operations():
         ("UNKNOWN", 0),
     ],
 )
-def test_filter_by_state(operations, state, expected_count):
+def test_filter_by_state(
+    operations: list[dict],
+    state: str,
+    expected_count: int,
+) -> None:
     result = filter_by_state(operations, state)
     assert len(result) == expected_count
 
 
-def test_filter_by_state_without_state():
+def test_filter_by_state_without_state() -> None:
     data = [
         {"date": "2024-03-15"},
         {"state": "EXECUTED", "date": "2024-03-20"},
@@ -56,7 +60,10 @@ def test_filter_by_state_without_state():
     "reverse",
     [True, False],
 )
-def test_sort_by_date(operations, reverse):
+def test_sort_by_date(
+    operations: list[dict],
+    reverse: bool,
+) -> None:
     result = sort_by_date(operations, reverse=reverse)
 
     dates = [operation["date"] for operation in result]
@@ -77,7 +84,7 @@ def test_sort_by_date(operations, reverse):
         ]
 
 
-def test_sort_by_date_same_dates():
+def test_sort_by_date_same_dates() -> None:
     data = [
         {"date": "2024-03-15", "id": 1},
         {"date": "2024-03-15", "id": 2},
@@ -93,7 +100,7 @@ def test_sort_by_date_same_dates():
     ]
 
 
-def test_sort_by_date_different_formats():
+def test_sort_by_date_different_formats() -> None:
     data = [
         {"date": "15.03.2024"},
         {"date": "01.12.2023"},
@@ -109,7 +116,7 @@ def test_sort_by_date_different_formats():
     ]
 
 
-def test_sort_by_date_invalid_date():
+def test_sort_by_date_invalid_date() -> None:
     data = [
         {"date": "2024-03-15"},
         {"date": "не дата"},

@@ -32,7 +32,7 @@ from src.widget import get_date, mask_account_card
         ),
     ],
 )
-def test_mask_account_card(value, expected):
+def test_mask_account_card(value: str, expected: str) -> None:
     assert mask_account_card(value) == expected
 
 
@@ -44,7 +44,7 @@ def test_mask_account_card(value, expected):
         "Счёт",
     ],
 )
-def test_mask_account_card_empty(value):
+def test_mask_account_card_empty(value: str) -> None:
     assert mask_account_card(value) == ""
 
 
@@ -56,7 +56,7 @@ def test_mask_account_card_empty(value):
         "Счет 123",
     ],
 )
-def test_mask_account_card_invalid_number(value):
+def test_mask_account_card_invalid_number(value: str) -> None:
     with pytest.raises(ValueError):
         mask_account_card(value)
 
@@ -72,7 +72,7 @@ def test_mask_account_card_invalid_number(value):
         ("2023-01-01", "01.01.2023"),
     ],
 )
-def test_get_date(value, expected):
+def test_get_date(value: str, expected: str) -> None:
     assert get_date(value) == expected
 
 
@@ -86,6 +86,6 @@ def test_get_date(value, expected):
         "15.08.2024",
     ],
 )
-def test_get_date_invalid(value):
+def test_get_date_invalid(value: str) -> None:
     with pytest.raises(ValueError):
         get_date(value)
