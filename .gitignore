@@ -22,7 +22,6 @@ env/
 .pytest_cache/
 .coverage
 .coverage.*
-htmlcov/
 
 # Type checking / linters
 .mypy_cache/

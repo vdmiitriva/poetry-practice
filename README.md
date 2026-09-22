@@ -147,3 +147,32 @@ poetry run isort --check-only .
 - flake8 — ошибок не обнаружено;
 - mypy — ошибок не обнаружено;
 - isort — ошибок форматирования импортов не обнаружено.
+
+## Тестирование
+
+Для запуска всех тестов используется команда:
+
+```bash
+poetry run pytest
+```
+
+Для проверки покрытия кода:
+
+```bash
+poetry run pytest --cov=src --cov-report=term-missing
+```
+
+Для создания HTML-отчёта о покрытии:
+
+```bash
+poetry run pytest --cov=src --cov-report=html
+```
+
+Результат покрытия:
+
+* общее покрытие — 100%;
+* `masks.py` — 100%;
+* `processing.py` — 100%;
+* `widget.py` — 100%.
+
+HTML-отчёт сохраняется в папке `htmlcov/`.
