@@ -6,8 +6,11 @@
 
 В проекте реализованы функции для обработки данных:
 
-- фильтрация операций по статусу;
-- сортировка операций по дате.
+* фильтрация операций по статусу;
+* сортировка операций по дате;
+* фильтрация транзакций по валюте;
+* получение описаний транзакций;
+* генерация номеров банковских карт.
 
 ## Установка
 
@@ -120,13 +123,106 @@ result = sort_by_date(operations)
 ]
 ```
 
+---
+
+### Функция filter_by_currency
+
+Функция `filter_by_currency` возвращает генератор транзакций, отфильтрованных по коду валюты.
+
+Пример использования:
+
+```python
+from src.generators import filter_by_currency
+
+transactions = [
+    {
+        "operationAmount": {
+            "currency": {
+                "code": "USD"
+            }
+        }
+    },
+    {
+        "operationAmount": {
+            "currency": {
+                "code": "RUB"
+            }
+        }
+    },
+]
+
+result = list(filter_by_currency(transactions, "USD"))
+
+print(result)
+```
+
+Результат:
+
+```python
+[
+    {
+        "operationAmount": {
+            "currency": {
+                "code": "USD"
+            }
+        }
+    }
+]
+```
+
+---
+
+### Функция transaction_descriptions
+
+Функция `transaction_descriptions` возвращает генератор с описаниями операций.
+
+Пример использования:
+
+```python
+from src.generators import transaction_descriptions
+
+result = transaction_descriptions(transactions)
+
+for description in result:
+    print(description)
+```
+
+Генератор последовательно возвращает описание каждой транзакции.
+
+---
+
+### Функция card_number_generator
+
+Функция `card_number_generator` генерирует номера карт в заданном диапазоне.
+
+Номер карты возвращается в формате `XXXX XXXX XXXX XXXX`.
+
+Пример использования:
+
+```python
+from src.generators import card_number_generator
+
+result = card_number_generator(1, 3)
+
+for card_number in result:
+    print(card_number)
+```
+
+Результат:
+
+```text
+0000 0000 0000 0001
+0000 0000 0000 0002
+0000 0000 0000 0003
+```
+
 ## Проверка качества кода
 
 Для проверки проекта использовались:
 
-- flake8;
-- mypy;
-- isort.
+* flake8;
+* mypy;
+* isort.
 
 Команды для запуска проверок:
 
@@ -144,9 +240,9 @@ poetry run isort --check-only .
 
 Результаты проверки:
 
-- flake8 — ошибок не обнаружено;
-- mypy — ошибок не обнаружено;
-- isort — ошибок форматирования импортов не обнаружено.
+* flake8 — ошибок не обнаружено;
+* mypy — ошибок не обнаружено;
+* isort — ошибок форматирования импортов не обнаружено.
 
 ## Тестирование
 
@@ -171,6 +267,7 @@ poetry run pytest --cov=src --cov-report=html
 Результат покрытия:
 
 * общее покрытие — 100%;
+* `generators.py` — 100%;
 * `masks.py` — 100%;
 * `processing.py` — 100%;
 * `widget.py` — 100%.
