@@ -11,7 +11,9 @@
 * фильтрация транзакций по валюте;
 * получение описаний транзакций;
 * генерация номеров банковских карт;
-* логирование выполнения функций с помощью декоратора `log`.
+* логирование выполнения функций с помощью декоратора `log`;
+* загрузка банковских операций из JSON-файла;
+* конвертация суммы операции в рубли с использованием внешнего API.
 
 ## Установка
 
@@ -32,6 +34,14 @@ cd poetry-practice
 ```bash
 poetry install
 ```
+
+4. Создать файл `.env` в корне проекта и добавить API-ключ:
+
+```text
+API_KEY=your_api_key
+```
+
+Пример переменной окружения находится в файле `.env.example`.
 
 ## Использование
 
@@ -265,22 +275,91 @@ divide error: division by zero. Inputs: (10, 0), {}
 
 После записи ошибки исходное исключение передаётся дальше.
 
+---
+
+### Функция load_operations
+
+Функция `load_operations` загружает банковские операции из JSON-файла.
+
+Функция принимает путь к JSON-файлу и возвращает список операций.
+
+Пример:
+
+```python
+from src.utils import load_operations
+
+operations = load_operations("data/operations.json")
+
+print(operations)
+```
+
+Если файл отсутствует, содержит некорректный JSON или в нём находится не список, функция возвращает пустой список.
+
+---
+
+### Функция convert_amount
+
+Функция `convert_amount` конвертирует сумму операции в рубли.
+
+Если валюта операции — `RUB`, сумма возвращается без конвертации.
+
+Для операций в `USD` или `EUR` функция получает актуальный курс валюты через внешний API и переводит сумму в рубли.
+
+Пример:
+
+```python
+from src.external_api import convert_amount
+
+transaction = {
+    "operationAmount": {
+        "amount": "100",
+        "currency": {
+            "code": "USD"
+        }
+    }
+}
+
+result = convert_amount(transaction)
+
+print(result)
+```
+
+Результатом является сумма операции в рублях типа `float`.
+
+---
+
+### Функция get_exchange_rate
+
+Функция `get_exchange_rate` получает текущий курс указанной валюты к рублю через Exchange Rates Data API.
+
+Пример:
+
+```python
+from src.external_api import get_exchange_rate
+
+rate = get_exchange_rate("USD")
+
+print(rate)
+```
+
+Для работы с API необходимо указать ключ в переменной окружения `API_KEY`.
+
 ## Проверка качества кода
 
 Для проверки проекта использовались:
 
-* flake8;
-* mypy;
-* isort.
+* `black`;
+* `flake8`;
+* `isort`.
 
 Команды для запуска проверок:
 
 ```bash
-poetry run flake8 .
+poetry run black .
 ```
 
 ```bash
-poetry run mypy .
+poetry run flake8 .
 ```
 
 ```bash
@@ -289,9 +368,9 @@ poetry run isort --check-only .
 
 Результаты проверки:
 
-* flake8 — ошибок не обнаружено;
-* mypy — ошибок не обнаружено;
-* isort — ошибок форматирования импортов не обнаружено.
+* `black` — форматирование выполнено;
+* `flake8` — ошибок не обнаружено;
+* `isort` — ошибок форматирования импортов не обнаружено.
 
 ## Тестирование
 
@@ -313,13 +392,6 @@ poetry run pytest --cov=src --cov-report=term-missing
 poetry run pytest --cov=src --cov-report=html
 ```
 
-Результат покрытия:
-
-* общее покрытие — 100%;
-* `decorators.py` — 100%;
-* `generators.py` — 100%;
-* `masks.py` — 100%;
-* `processing.py` — 100%;
-* `widget.py` — 100%.
+Тестами покрыты функции обработки операций, генераторы, декоратор, загрузка данных из JSON и конвертация валют.
 
 HTML-отчёт сохраняется в папке `htmlcov/`.
