@@ -34,6 +34,14 @@ cd poetry-practice
 poetry install
 ```
 
+4. Создать файл `.env` в корне проекта и добавить API-ключ:
+
+```text
+API_KEY=your_api_key
+```
+
+Пример переменной окружения находится в файле `.env.example`.
+
 ## Использование
 
 ### Функция filter_by_state
