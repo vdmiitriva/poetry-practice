@@ -1,5 +1,9 @@
+import importlib
 from unittest.mock import patch
 
+import pytest
+
+import src.external_api as external_api
 from src.external_api import convert_amount, get_exchange_rate
 
 
@@ -70,3 +74,12 @@ def test_get_exchange_rate():
         result = get_exchange_rate("USD")
 
     assert result == 90.0
+
+
+def test_api_key_missing():
+    """Проверяет ошибку при отсутствии API-ключа."""
+    with patch("dotenv.load_dotenv"), patch("os.getenv", return_value=None):
+        with pytest.raises(ValueError, match="API_KEY is not set"):
+            importlib.reload(external_api)
+
+    importlib.reload(external_api)
