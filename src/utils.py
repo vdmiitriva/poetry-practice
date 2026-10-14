@@ -2,6 +2,8 @@ import json
 import logging
 from pathlib import Path
 
+import pandas as pd
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -42,4 +44,32 @@ def load_operations(file_path):
 
     except json.JSONDecodeError:
         logger.error("Некорректный JSON в файле: %s", file_path)
+        return []
+
+
+def load_operations_from_csv(file_path):
+    """Загружает список операций из CSV-файла."""
+    try:
+        data = pd.read_csv(file_path, sep=";")
+        operations = data.to_dict(orient="records")
+
+        logger.info("Операции успешно загружены из CSV-файла %s", file_path)
+        return operations
+
+    except FileNotFoundError:
+        logger.error("Файл не найден: %s", file_path)
+        return []
+
+
+def load_operations_from_excel(file_path):
+    """Загружает список операций из Excel-файла."""
+    try:
+        data = pd.read_excel(file_path)
+        operations = data.to_dict(orient="records")
+
+        logger.info("Операции успешно загружены из Excel-файла %s", file_path)
+        return operations
+
+    except FileNotFoundError:
+        logger.error("Файл не найден: %s", file_path)
         return []
