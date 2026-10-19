@@ -1,6 +1,6 @@
 import pytest
 
-from src.processing import filter_by_state, sort_by_date
+from src.processing import filter_by_state, process_bank_operations, process_bank_search, sort_by_date
 
 
 @pytest.fixture
@@ -124,3 +124,48 @@ def test_sort_by_date_invalid_date() -> None:
 
     with pytest.raises(ValueError):
         sort_by_date(data)
+
+
+def test_process_bank_search() -> None:
+    data = [
+        {"description": "Перевод организации", "id": 1},
+        {"description": "Оплата товаров", "id": 2},
+        {"description": "Перевод со счета", "id": 3},
+    ]
+
+    result = process_bank_search(data, "перевод")
+
+    assert [operation["id"] for operation in result] == [1, 3]
+
+
+def test_process_bank_search_no_matches() -> None:
+    data = [{"description": "Оплата товаров"}]
+
+    assert process_bank_search(data, "перевод") == []
+
+
+def test_process_bank_search_missing_description() -> None:
+    data = [{"id": 1}, {"description": "Перевод организации"}]
+
+    assert process_bank_search(data, "перевод") == [{"description": "Перевод организации"}]
+
+
+def test_process_bank_operations() -> None:
+    data = [
+        {"description": "Перевод организации"},
+        {"description": "Оплата товаров"},
+        {"description": "Перевод со счета"},
+        {"description": "Оплата услуг"},
+    ]
+
+    result = process_bank_operations(data, ["Перевод", "Оплата", "Возврат"])
+
+    assert result == {
+        "Перевод": 2,
+        "Оплата": 2,
+        "Возврат": 0,
+    }
+
+
+def test_process_bank_operations_empty_data() -> None:
+    assert process_bank_operations([], ["Перевод"]) == {"Перевод": 0}
